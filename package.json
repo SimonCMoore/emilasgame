@@ -1,0 +1,13 @@
+{
+  "name": "escape-the-beauty-counter",
+  "version": "0.1.0",
+  "description": "A first-person escape room browser game",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server --port=3000 --no-browser",
+    "dev": "live-server --port=3000 --open=index.html"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

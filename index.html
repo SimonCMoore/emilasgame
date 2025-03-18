@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape the Beauty Counter</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="health-bar"></div>
+        <div id="inventory"></div>
+        <canvas id="game-canvas"></canvas>
+        
+        <div id="stats-area">
+            <div class="stat-item">
+                <span class="stat-label">Health:</span>
+                <span class="stat-value" id="health-value">100%</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Items:</span>
+                <span class="stat-value" id="items-count">0/10</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Time:</span>
+                <span class="stat-value" id="time-elapsed">00:00</span>
+            </div>
+        </div>
+    </div>
+    <div id="ui-overlay">
+        <div id="message"></div>
+    </div>
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h1>Loading Game...</h1>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Game scripts -->
+    <script src="js/inventory.js"></script>
+    <script src="js/npc.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/room.js"></script>
+    <script src="js/shoe_room.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/game.js"></script>
+    
+    <!-- Instructions overlay -->
+    <div id="instructions" style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 14px;">
+        <p><strong>Controls:</strong> WASD to move, Mouse to look</p>
+        <p><strong>Interact:</strong> Click on objects or press I for nearest object</p>
+        <p><strong>Bag:</strong> Press B to view bag contents</p>
+        <p><strong>Examine:</strong> Press E to examine closely</p>
+    </div>
+    
+    <!-- Live reload for development -->
+    <script>
+        // Check if we're running on the development server
+        if (window.location.port === '3000') {
+            document.write('<script src="http://localhost:35729/livereload.js?snipver=1"></' + 'script>');
+            console.log('Development mode with live reload enabled');
+        }
+    </script>
+</body>
+</html>
