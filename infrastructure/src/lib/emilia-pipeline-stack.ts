@@ -40,7 +40,7 @@ export class EmiliaPipelineStack extends cdk.Stack {
     const sourceAction = new codepipeline_actions.GitHubSourceAction({
       actionName: 'GitHub_Source',
       owner: 'SimonCMoore',
-      repo: 'emilia',
+      repo: 'emilasgame', // Updated to match the actual repository name
       branch: 'main',
       oauthToken: cdk.SecretValue.secretsManager('github-token'),
       output: sourceOutput,
