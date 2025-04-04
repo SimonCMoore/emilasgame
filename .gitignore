@@ -3,3 +3,7 @@ node_modules/
 *.log
 infrastructure/cdk.out/
 infrastructure/dist/
+infrastructure/lib/bin/
+infrastructure/lib/lib/
+infrastructure/lib/test/
+infrastructure/test/
