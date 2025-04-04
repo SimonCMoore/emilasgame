@@ -42,15 +42,32 @@ class InteractionManager {
             .map(obj => obj.mesh);
         
         // Check for intersections
-        const intersects = this.raycaster.intersectObjects(objects);
+        const intersects = this.raycaster.intersectObjects(objects, true);
         
         if (intersects.length > 0) {
             const intersectedObject = intersects[0].object;
-            const objectData = this.game.room.objects.get(intersectedObject.uuid);
+            
+            // Find the parent object that has data in the objects map
+            let currentObject = intersectedObject;
+            let objectData = null;
+            
+            while (currentObject && !objectData) {
+                objectData = this.game.room.objects.get(currentObject.uuid);
+                if (!objectData && currentObject.parent) {
+                    currentObject = currentObject.parent;
+                } else {
+                    break;
+                }
+            }
             
             // Check if object is within interaction distance
             if (objectData && intersects[0].distance <= this.interactionDistance) {
-                this.handleInteraction(objectData);
+                if (this.game.room.handleInteraction) {
+                    // Use room's specific interaction handler if available
+                    this.game.room.handleInteraction(objectData);
+                } else {
+                    this.handleInteraction(objectData);
+                }
             } else if (intersects[0].distance > this.interactionDistance) {
                 this.game.showMessage("Too far away to interact");
             }

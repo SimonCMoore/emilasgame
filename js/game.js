@@ -201,12 +201,15 @@ class Game {
         this.room = new ShoeRoom(this.scene, this.loadingManager);
         this.room.setGame(this);
         
+        // Reset level completion flag
+        this.levelComplete = false;
+        
         // Re-enable player movement
         this.player.canMove = true;
         
         // Show welcome message
         setTimeout(() => {
-            this.showMessage('Welcome to the shoe department!', 3000);
+            this.showMessage('Welcome to the shoe department! Find the crystal slipper to escape.', 5000);
         }, 2000);
     }
     

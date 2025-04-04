@@ -42,7 +42,10 @@ You find yourself in a beauty store and need to navigate through different depar
 
 #### Shoe Department
 1. Explore the shoe displays
-2. (More objectives coming soon)
+2. Find the hidden golden shoe
+3. Look for a size card with a combination code
+4. Unlock the special display case
+5. Collect the crystal slipper to exit
 
 ## 🚀 Getting Started
 
