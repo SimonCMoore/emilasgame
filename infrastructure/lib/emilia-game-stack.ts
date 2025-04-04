@@ -5,6 +5,8 @@ import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as path from 'path';
 
 export class EmiliaGameStack extends cdk.Stack {
   public readonly websiteBucket: s3.Bucket;
@@ -15,7 +17,7 @@ export class EmiliaGameStack extends cdk.Stack {
 
     // Create an S3 bucket to host the website
     this.websiteBucket = new s3.Bucket(this, 'EmiliaGameBucket', {
-      bucketName: `emilia-game-${this.account}-${this.region}`,
+      bucketName: `emilia-game-${this.account.substring(0, 8)}-${this.region}`,
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
       publicReadAccess: false,
@@ -58,6 +60,27 @@ export class EmiliaGameStack extends cdk.Stack {
       ],
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
     });
+
+    // Deploy initial content to S3
+    try {
+      new s3deploy.BucketDeployment(this, 'DeployEmiliaGame', {
+        sources: [s3deploy.Source.asset(path.join(__dirname, '../../'))],
+        destinationBucket: this.websiteBucket,
+        distribution: this.distribution,
+        distributionPaths: ['/*'],
+        exclude: [
+          'infrastructure/**',
+          'node_modules/**',
+          '.git/**',
+          'package.json',
+          'package-lock.json',
+          'README.md',
+          'SPECIFICATION.md'
+        ],
+      });
+    } catch (error) {
+      console.warn('Initial deployment skipped. Make sure to deploy content via pipeline.');
+    }
 
     // Store the bucket name and distribution ID in SSM Parameter Store for use by the pipeline
     new ssm.StringParameter(this, 'EmiliaGameBucketNameParam', {

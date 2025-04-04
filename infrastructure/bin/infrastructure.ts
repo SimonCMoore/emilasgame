@@ -7,7 +7,7 @@ import { EmiliaPipelineStack } from '../lib/emilia-pipeline-stack';
 const app = new cdk.App();
 
 // Create the main game hosting stack
-new EmiliaGameStack(app, 'EmiliaGameStack', {
+const gameStack = new EmiliaGameStack(app, 'EmiliaGameStack', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION || 'us-east-1'
@@ -15,11 +15,12 @@ new EmiliaGameStack(app, 'EmiliaGameStack', {
   description: 'Stack for hosting the Emilia game static website'
 });
 
-// Create the CI/CD pipeline stack
+// Create the CI/CD pipeline stack with dependency on game stack
 new EmiliaPipelineStack(app, 'EmiliaPipelineStack', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION || 'us-east-1'
   },
-  description: 'Stack for CI/CD pipeline to deploy the Emilia game'
+  description: 'Stack for CI/CD pipeline to deploy the Emilia game',
+  gameStack: gameStack // Pass the game stack as a property
 });

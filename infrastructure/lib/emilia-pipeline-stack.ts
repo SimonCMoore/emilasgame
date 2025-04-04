@@ -3,12 +3,20 @@ import { Construct } from 'constructs';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
 import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
-import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { EmiliaGameStack } from './emilia-game-stack';
+
+interface EmiliaPipelineStackProps extends cdk.StackProps {
+  gameStack: EmiliaGameStack;
+}
 
 export class EmiliaPipelineStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: EmiliaPipelineStackProps) {
     super(scope, id, props);
+
+    // Get references from the game stack
+    const websiteBucket = props.gameStack.websiteBucket;
+    const distribution = props.gameStack.distribution;
 
     // Create artifact bucket for pipeline
     const artifactBucket = new cdk.aws_s3.Bucket(this, 'EmiliaPipelineArtifacts', {
@@ -114,9 +122,9 @@ export class EmiliaPipelineStack extends cdk.Stack {
         'cloudfront:CreateInvalidation',
       ],
       resources: [
-        `arn:aws:s3:::${ssm.StringParameter.valueForStringParameter(this, '/emilia/game/bucket-name')}/*`,
-        `arn:aws:s3:::${ssm.StringParameter.valueForStringParameter(this, '/emilia/game/bucket-name')}`,
-        `arn:aws:cloudfront::${this.account}:distribution/${ssm.StringParameter.valueForStringParameter(this, '/emilia/game/distribution-id')}`,
+        websiteBucket.bucketArn,
+        `${websiteBucket.bucketArn}/*`,
+        `arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`,
       ],
     }));
 
@@ -126,10 +134,10 @@ export class EmiliaPipelineStack extends cdk.Stack {
       input: buildOutput,
       environmentVariables: {
         BUCKET_NAME: {
-          value: ssm.StringParameter.valueForStringParameter(this, '/emilia/game/bucket-name'),
+          value: websiteBucket.bucketName,
         },
         DISTRIBUTION_ID: {
-          value: ssm.StringParameter.valueForStringParameter(this, '/emilia/game/distribution-id'),
+          value: distribution.distributionId,
         },
       },
     });
@@ -138,5 +146,8 @@ export class EmiliaPipelineStack extends cdk.Stack {
       stageName: 'Deploy',
       actions: [deployAction],
     });
+
+    // Add dependency to ensure game stack is deployed first
+    this.addDependency(props.gameStack);
   }
 }
